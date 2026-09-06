@@ -1,98 +1,127 @@
 """Lakebase connection helper for the DWH-on-Databricks course.
 
-Lakebase is Databricks' managed Postgres. Auth is your Databricks identity:
-the password is a short-lived OAuth token minted from the workspace.
+Local-first: reads connection details from `.env` in this directory
+(or real environment variables). Copy `.env.example` to `.env` and fill it in.
 
-Usage in a Databricks notebook:
+Auth options (checked in this order):
+  1. Personal Access Token  — DATABRICKS_HOST + DATABRICKS_TOKEN in .env
+     (the SDK exchanges it for a short-lived Lakebase OAuth token)
+  2. Inside a Databricks notebook — ambient identity via databricks-sdk
+
+Usage (locally):
+
+    cd scripts/lakebase
+    source ../../.venv/bin/activate
+    python events_day1.py
+
+In a Databricks notebook:
 
     %pip install psycopg2-binary
-    from lakebase import connect          # upload scripts/lakebase/ as workspace files
-
-    with connect() as conn:
-        run_file(conn, "seed_day0.sql")
-
-Locally (with the Databricks CLI profile configured):
-
-    LAKEBASE_HOST=... python events_day1.py
+    from lakebase import connect, run_file
 """
 
 from __future__ import annotations
 
 import os
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Optional
+from urllib.parse import unquote, urlparse
 
-# ---------------------------------------------------------------------------
-# Configuration — override via environment variables or by editing DEFAULTS.
-# `host` is the one thing you MUST set after creating your Lakebase instance.
-# ---------------------------------------------------------------------------
-DEFAULTS = {
-    "host": None,                    # e.g. "instance-xyz.database.cloud.databricks.com"
-    "port": 5432,
-    "database": "dwh_course",
-    "instance": "dwh-course",        # Lakebase instance name in the workspace
-}
+from dotenv import load_dotenv
 
-# psycopg2 is present on classic clusters; on serverless install it via
-# %pip install psycopg2-binary  (notebook-scoped)
+# Load .env sitting next to this file (no-op if it doesn't exist)
+load_dotenv(Path(__file__).parent / ".env")
+
 import psycopg2  # noqa: E402
 
 
-def _resolve(key: str):
-    """Environment variable wins, then DEFAULTS."""
-    return os.environ.get(f"LAKEBASE_{key.upper()}", DEFAULTS.get(key))
+def _env(key: str, default=None):
+    return os.environ.get(key, default)
 
 
-def _oauth_token() -> str:
-    """Mint a short-lived token from the ambient Databricks identity."""
+# ---------------------------------------------------------------------------
+# Auth helpers
+# ---------------------------------------------------------------------------
+
+def _workspace_client():
+    """databricks-sdk client, configured from DATABRICKS_HOST/TOKEN (or CLI
+    profile env vars) when local, or ambient identity inside a workspace."""
     try:
         from databricks.sdk import WorkspaceClient
-
-        w = WorkspaceClient()
-        return w.config.oauth_token().access_token
-    except ImportError:
-        # Local fallback: use the CLI-configured PAT if provided
-        token = os.environ.get("DATABRICKS_TOKEN")
-        if not token:
-            raise RuntimeError(
-                "databricks-sdk not available and DATABRICKS_TOKEN not set. "
-                "Run inside a Databricks notebook or configure the SDK/CLI."
-            )
-        return token
+    except ImportError as e:
+        raise RuntimeError(
+            "databricks-sdk not installed. Run: pip install -r requirements.txt"
+        ) from e
+    return WorkspaceClient()  # SDK auto-reads DATABRICKS_HOST / DATABRICKS_TOKEN
 
 
-def _current_user() -> str:
+def _database_credential(client, instance_name: str) -> str:
+    """Short-lived Lakebase Postgres password, minted via the Database
+    Instances API — works regardless of how the client itself authenticated
+    (PAT, OAuth, ambient identity), unlike `client.config.oauth_token()`."""
+    cred = client.database.generate_database_credential(instance_names=[instance_name])
+    return cred.token
+
+
+def _current_user(client) -> str:
     """Postgres username = your Databricks identity (email)."""
-    try:
-        from databricks.sdk import WorkspaceClient
+    user = client.current_user.me().user_name
+    if not user:
+        raise RuntimeError("Could not resolve Databricks user identity.")
+    return user
 
-        return WorkspaceClient().current_user.me().user_name
-    except ImportError:
-        user = os.environ.get("DATABRICKS_USER")
-        if not user:
-            raise RuntimeError(
-                "Set DATABRICKS_USER (your Databricks email) for local runs."
-            )
-        return user
 
+def _conn_params_from_url(url: str) -> dict:
+    """Parse `postgresql://user@host/db?sslmode=require` (password omitted —
+    it's injected separately as the short-lived OAuth token)."""
+    parsed = urlparse(url)
+    return {
+        "host": parsed.hostname,
+        "port": parsed.port or 5432,
+        "dbname": parsed.path.lstrip("/") or None,
+        "user": unquote(parsed.username) if parsed.username else None,
+        "sslmode": (parsed.query.split("sslmode=")[-1].split("&")[0]
+                    if "sslmode=" in parsed.query else "require"),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
 @contextmanager
 def connect(database: Optional[str] = None, autocommit: bool = True):
     """Open a psycopg2 connection to Lakebase. Yields the connection."""
-    host = _resolve("host")
-    if not host:
-        raise ValueError(
-            "Lakebase host not configured. Set LAKEBASE_HOST or edit DEFAULTS "
-            "in lakebase.py — find the host in the Lakebase UI (Instance → Connect)."
-        )
+    url = _env("LAKEBASE_URL")
+    if url:
+        params = _conn_params_from_url(url)
+    else:
+        host = _env("LAKEBASE_HOST")
+        if not host:
+            raise ValueError(
+                "Neither LAKEBASE_URL nor LAKEBASE_HOST is set. Copy "
+                ".env.example to .env and paste the connection string (or "
+                "hostname) from Lakebase UI → your instance → Connect."
+            )
+        params = {
+            "host": host,
+            "port": int(_env("LAKEBASE_PORT", "5432")),
+            "dbname": _env("LAKEBASE_DATABASE", "dwh_course"),
+            "user": None,
+            "sslmode": "require",
+        }
+
+    client = _workspace_client()
+    instance_name = _env("LAKEBASE_INSTANCE_NAME", "dwh-course")
 
     conn = psycopg2.connect(
-        host=host,
-        port=int(_resolve("port")),
-        dbname=database or _resolve("database"),
-        user=_current_user(),
-        password=_oauth_token(),
-        sslmode="require",
+        host=params["host"],
+        port=params["port"],
+        dbname=database or params["dbname"] or "dwh_course",
+        user=_env("DATABRICKS_USER") or params["user"] or _current_user(client),
+        password=_database_credential(client, instance_name),
+        sslmode=params["sslmode"],
         connect_timeout=15,
     )
     conn.autocommit = autocommit

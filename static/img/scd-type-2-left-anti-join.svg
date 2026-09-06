@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-labelledby="title description">
+  <title id="title">Left anti join identifies new customer records</title>
+  <desc id="description">Rows in the ingress customer table whose customer key is absent from the bronze customer dimension are returned as new records.</desc>
+  <rect width="1200" height="540" fill="#f8fafc"/>
+  <text x="60" y="60" fill="#172033" font-family="Arial, sans-serif" font-size="30" font-weight="700">Identify new records with a left anti join</text>
+  <text x="60" y="96" fill="#526074" font-family="Arial, sans-serif" font-size="19">Keep ingress rows whose customer key does not exist in the bronze dimension.</text>
+  <g transform="translate(60 140)">
+    <rect width="315" height="300" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <path d="M6 0h303a6 6 0 0 1 6 6v52H0V6a6 6 0 0 1 6-6z" fill="#2563eb"/>
+    <text x="24" y="37" fill="#ffffff" font-family="Arial, sans-serif" font-size="21" font-weight="700">ingress.customer</text>
+    <text x="24" y="94" fill="#526074" font-family="Arial, sans-serif" font-size="17" font-weight="700">c_custkey</text>
+    <line x1="20" y1="112" x2="295" y2="112" stroke="#d8e0eb"/>
+    <text x="24" y="148" fill="#172033" font-family="Arial, sans-serif" font-size="19">101   Alice Corp</text>
+    <text x="24" y="193" fill="#172033" font-family="Arial, sans-serif" font-size="19">102   Bob Traders</text>
+    <rect x="12" y="213" width="291" height="68" rx="4" fill="#dcfce7"/>
+    <text x="24" y="255" fill="#166534" font-family="Arial, sans-serif" font-size="19" font-weight="700">103   Carla Foods</text>
+  </g>
+  <g transform="translate(455 140)">
+    <rect width="278" height="300" rx="6" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M6 0h266a6 6 0 0 1 6 6v52H0V6a6 6 0 0 1 6-6z" fill="#64748b"/>
+    <text x="24" y="37" fill="#ffffff" font-family="Arial, sans-serif" font-size="21" font-weight="700">bronze.customer</text>
+    <text x="24" y="94" fill="#526074" font-family="Arial, sans-serif" font-size="17" font-weight="700">c_custkey</text>
+    <line x1="20" y1="112" x2="258" y2="112" stroke="#d8e0eb"/>
+    <text x="24" y="148" fill="#172033" font-family="Arial, sans-serif" font-size="19">101</text>
+    <text x="24" y="193" fill="#172033" font-family="Arial, sans-serif" font-size="19">102</text>
+  </g>
+  <path d="M755 240h90" fill="none" stroke="#f97316" stroke-width="4"/>
+  <path d="m845 240-18-11v22z" fill="#f97316"/>
+  <text x="755" y="206" fill="#9a3412" font-family="Arial, sans-serif" font-size="18" font-weight="700">LEFT ANTI JOIN</text>
+  <text x="755" y="272" fill="#9a3412" font-family="Arial, sans-serif" font-size="16">on c_custkey</text>
+  <g transform="translate(900 140)">
+    <rect width="230" height="300" rx="6" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+    <path d="M6 0h218a6 6 0 0 1 6 6v52H0V6a6 6 0 0 1 6-6z" fill="#16a34a"/>
+    <text x="22" y="37" fill="#ffffff" font-family="Arial, sans-serif" font-size="21" font-weight="700">new_df</text>
+    <text x="22" y="94" fill="#526074" font-family="Arial, sans-serif" font-size="17" font-weight="700">new customer rows</text>
+    <line x1="20" y1="112" x2="210" y2="112" stroke="#d8e0eb"/>
+    <rect x="12" y="128" width="206" height="68" rx="4" fill="#dcfce7"/>
+    <text x="24" y="170" fill="#166534" font-family="Arial, sans-serif" font-size="19" font-weight="700">103</text>
+  </g>
+</svg>

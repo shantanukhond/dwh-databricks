@@ -1,6 +1,6 @@
 """Continuous random order generator — the "business keeps happening" script.
 
-Inserts random orders into app.orders at a steady clip, so the streaming,
+Inserts random orders into retail.orders at a steady clip, so the streaming,
 micro-batch, and CDC lessons have something live to chew on.
 
 Run inside a Databricks notebook (after %pip install psycopg2-binary):
@@ -31,7 +31,7 @@ STATUSES = ["placed", "placed", "placed", "shipped"]   # skew toward 'placed'
 
 def _existing_customer_ids(conn) -> list[int]:
     with conn.cursor() as cur:
-        cur.execute("SELECT customer_id FROM app.customers ORDER BY customer_id")
+        cur.execute("SELECT customer_id FROM retail.customers ORDER BY customer_id")
         return [r[0] for r in cur.fetchall()]
 
 
@@ -39,7 +39,7 @@ def insert_random_order(conn, customer_ids: list[int], order_id: int) -> None:
     with conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO app.orders (order_id, customer_id, amount, status)
+            INSERT INTO retail.orders (order_id, customer_id, amount, status)
             VALUES (%s, %s, %s, %s)
             """,
             (
@@ -60,7 +60,7 @@ def maybe_signup_new_customer(conn, customer_ids: list[int], p: float = 0.05) ->
     with conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO app.customers (customer_id, name, email, city, plan, created_at)
+            INSERT INTO retail.customers (customer_id, name, email, city, plan, created_at)
             VALUES (%s, %s, %s, %s, %s, CURRENT_DATE)
             ON CONFLICT (customer_id) DO NOTHING
             """,
@@ -78,8 +78,8 @@ def run(minutes: float = 10.0, per_minute: float = 6.0) -> None:
     with connect() as conn:
         customer_ids = _existing_customer_ids(conn)
         if not customer_ids:
-            raise RuntimeError("app.customers is empty — run seed_day0.sql first")
-        next_id = (scalar(conn, "SELECT COALESCE(MAX(order_id), 1000) FROM app.orders") or 1000) + 1
+            raise RuntimeError("retail.customers is empty — run seed_day0.sql first")
+        next_id = (scalar(conn, "SELECT COALESCE(MAX(order_id), 1000) FROM retail.orders") or 1000) + 1
 
         print(f"Generating ~{per_minute:.0f} orders/min for {minutes:.0f} min "
               f"(starting at order_id {next_id}) …")

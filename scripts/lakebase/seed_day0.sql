@@ -7,17 +7,17 @@
 
 BEGIN;
 
-CREATE SCHEMA IF NOT EXISTS app;
+CREATE SCHEMA IF NOT EXISTS retail;
 
-SET search_path = app, public;
+SET search_path = retail, public;
 
 -- ---------------------------------------------------------------------------
 -- customers — the dimension source
 -- email changes are throwaway (→ SCD Type 1)
 -- city  changes matter        (→ SCD Type 2)
 -- ---------------------------------------------------------------------------
-DROP TABLE IF EXISTS app.customers CASCADE;
-CREATE TABLE app.customers (
+DROP TABLE IF EXISTS retail.customers CASCADE;
+CREATE TABLE retail.customers (
     customer_id  INTEGER      PRIMARY KEY,
     name         TEXT         NOT NULL,
     email        TEXT         NOT NULL,
@@ -30,10 +30,10 @@ CREATE TABLE app.customers (
 -- ---------------------------------------------------------------------------
 -- orders — the fact source
 -- ---------------------------------------------------------------------------
-DROP TABLE IF EXISTS app.orders CASCADE;
-CREATE TABLE app.orders (
+DROP TABLE IF EXISTS retail.orders CASCADE;
+CREATE TABLE retail.orders (
     order_id     INTEGER      PRIMARY KEY,
-    customer_id  INTEGER      NOT NULL REFERENCES app.customers (customer_id),
+    customer_id  INTEGER      NOT NULL REFERENCES retail.customers (customer_id),
     amount       NUMERIC(10,2) NOT NULL,
     status       TEXT         NOT NULL DEFAULT 'placed',
     order_ts     TIMESTAMPTZ  NOT NULL DEFAULT now()
@@ -42,7 +42,7 @@ CREATE TABLE app.orders (
 -- ---------------------------------------------------------------------------
 -- Day 0 customers (10 rows)
 -- ---------------------------------------------------------------------------
-INSERT INTO app.customers (customer_id, name, email, city, plan, created_at) VALUES
+INSERT INTO retail.customers (customer_id, name, email, city, plan, created_at) VALUES
     ( 1, 'Asha Verma',    'asha@example.com',    'Bengaluru',  'pro',  DATE '2026-09-01'),
     ( 2, 'Marco Ruiz',    'marco@example.com',   'Mexico City','free', DATE '2026-09-01'),
     ( 3, 'Priya Nair',    'priya@example.com',   'Pune',       'pro',  DATE '2026-09-01'),
@@ -57,7 +57,7 @@ INSERT INTO app.customers (customer_id, name, email, city, plan, created_at) VAL
 -- ---------------------------------------------------------------------------
 -- Day 0 orders (15 rows)
 -- ---------------------------------------------------------------------------
-INSERT INTO app.orders (order_id, customer_id, amount, status, order_ts) VALUES
+INSERT INTO retail.orders (order_id, customer_id, amount, status, order_ts) VALUES
     (1001,  1, 129.99, 'placed',    TIMESTAMPTZ '2026-09-01 09:14:00+00'),
     (1002,  3,  54.50, 'placed',    TIMESTAMPTZ '2026-09-01 10:02:00+00'),
     (1003,  2,  12.00, 'shipped',   TIMESTAMPTZ '2026-09-01 10:41:00+00'),
@@ -77,6 +77,6 @@ INSERT INTO app.orders (order_id, customer_id, amount, status, order_ts) VALUES
 COMMIT;
 
 -- Quick check
-SELECT 'customers' AS table_name, COUNT(*) AS rows FROM app.customers
+SELECT 'customers' AS table_name, COUNT(*) AS rows FROM retail.customers
 UNION ALL
-SELECT 'orders', COUNT(*) FROM app.orders;
+SELECT 'orders', COUNT(*) FROM retail.orders;
