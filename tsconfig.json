@@ -1,0 +1,13 @@
+{
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "lib": ["DOM", "ES2022"],
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": ["src/", "docusaurus.config.ts", "sidebars.ts"]
+}
