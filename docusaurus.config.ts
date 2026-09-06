@@ -12,7 +12,7 @@ const config: Config = {
   baseUrl: '/',
 
   organizationName: 'shantanukhond',
-  projectName: 'dwh',
+  projectName: 'dwh-databricks',
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
@@ -39,7 +39,7 @@ const config: Config = {
         docs: {
           routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/shantanukhond/dwh/edit/main/',
+          editUrl: 'https://github.com/shantanukhond/dwh-databricks/edit/main/',
         },
         blog: false,
         theme: {
@@ -76,7 +76,7 @@ const config: Config = {
           'aria-label': 'YouTube channel',
         },
         {
-          href: 'https://github.com/shantanukhond/dwh',
+          href: 'https://github.com/shantanukhond/dwh-databricks',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',

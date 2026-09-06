@@ -11,30 +11,30 @@ Docs site: **https://dwh.shantanukhond.me**
 
 | # | Lesson | Status |
 |---|--------|--------|
-| 1 | Batch Loading | 🚧 outline |
-| 2 | Auto Loader | 🚧 outline |
-| 3 | Micro-Batches | 🚧 outline |
-| 4 | Streaming | 🚧 outline |
-| 5 | Change Data Capture (CDC) | 🚧 outline |
-| 6 | MERGE & SCD (bridge to module 02) | 🚧 outline |
-| 7 | Message Queues (Kafka / Event Hubs / Kinesis) | 🚧 outline |
-| 8 | Change Data Feed | 🚧 outline |
-| 9 | JDBC & Lakehouse Federation | 🚧 outline |
-| 10 | Zerobus Ingest | 🚧 outline |
-| 11 | Lakeflow Connect (managed connectors) | 🚧 outline |
-| 12 | Custom Data Sources | 🚧 outline |
-| 13 | Delta Sharing | 🚧 outline |
+| 1 | [Batch Loading](docs/data-loading/batch-loading.md) | 🚧 outline |
+| 2 | [Auto Loader](docs/data-loading/auto-loader.md) | 🚧 outline |
+| 3 | [Micro-Batches](docs/data-loading/micro-batches.md) | 🚧 outline |
+| 4 | [Streaming](docs/data-loading/streaming.md) | 🚧 outline |
+| 5 | [Change Data Capture (CDC)](docs/data-loading/change-data-capture.md) | 🚧 outline |
+| 6 | [MERGE & SCD](docs/data-loading/merge-scd.md) (bridge to module 02) | 🚧 outline |
+| 7 | [Message Queues](docs/data-loading/message-queues.md) (Kafka / Event Hubs / Kinesis) | 🚧 outline |
+| 8 | [Change Data Feed](docs/data-loading/change-data-feed.md) | 🚧 outline |
+| 9 | [JDBC & Lakehouse Federation](docs/data-loading/jdbc-federation.md) | 🚧 outline |
+| 10 | [Zerobus Ingest](docs/data-loading/zerobus.md) | 🚧 outline |
+| 11 | [Lakeflow Connect](docs/data-loading/lakeflow-connect.md) (managed connectors) | 🚧 outline |
+| 12 | [Custom Data Sources](docs/data-loading/custom-sources.md) | 🚧 outline |
+| 13 | [Delta Sharing](docs/data-loading/delta-sharing.md) | 🚧 outline |
 
 ### 02 — Slowly Changing Dimensions (SCD)
 
 | # | Lesson | Status |
 |---|--------|--------|
-| 1 | SCD overview | 🚧 outline |
-| 2 | Type 0 — fixed | 🚧 outline |
-| 3 | Type 1 — overwrite | 🚧 outline |
-| 4 | Type 2 — full history | 🚧 outline |
-| 5 | Type 3 — previous value | 🚧 outline |
-| 6 | Late-arriving data | 🚧 outline |
+| 1 | [SCD overview](docs/scd/index.md) | 🚧 outline |
+| 2 | [Type 0 — fixed](docs/scd/scd-type-0.md) | 🚧 outline |
+| 3 | [Type 1 — overwrite](docs/scd/scd-type-1.md) | 🚧 outline |
+| 4 | [Type 2 — full history](docs/scd/scd-type-2.md) | 🚧 outline |
+| 5 | [Type 3 — previous value](docs/scd/scd-type-3.md) | 🚧 outline |
+| 6 | [Early-arriving facts](docs/scd/early-arriving-facts.md) | 🚧 outline |
 
 ### Coming later
 
