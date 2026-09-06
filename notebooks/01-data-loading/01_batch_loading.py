@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "5"
+# ///
 # MAGIC %md
 # MAGIC # 01 — Batch Loading
 # MAGIC
@@ -17,7 +21,12 @@
 
 # COMMAND ----------
 
-# TODO: setup code
+import io, pandas as pd
+
+obj = s3.get_object(Bucket="nyc-tlc", Key="misc/taxi_zone_lookup.csv")
+pdf = pd.read_csv(io.BytesIO(obj["Body"].read()))
+print(pdf.shape)
+pdf.head()
 
 # COMMAND ----------
 
