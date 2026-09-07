@@ -6,6 +6,8 @@ record. When a customer changes address, for example, the old customer row is
 closed and a new current row is added. Facts can then be joined to the version
 that was valid when the fact occurred.
 
+![SCD Type 2 Example](resources/scd-2-table-screenshot.png)
+
 This is the usual choice when historical reporting must reflect the attributes
 known at the time, not today's attributes.
 
@@ -38,7 +40,7 @@ We do these changes in multiple phases and steps as follows
 
 ### 1. Identify New Records
 This is simple Left Anti Join Which can be described as following diagram 
-![Left Anti Join](resources/image.png)
+![Left Anti Join](resources/scd-2-venn-dia.png)
 
 Using left anti join we can simply find records which are available in ingress table but not available in bronze table so that they can be loaded wih current 
 
