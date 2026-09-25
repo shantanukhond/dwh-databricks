@@ -1,6 +1,11 @@
 ---
 title: Type 2 · Full History
 ---
+
+import YouTube from '@site/src/components/YouTube';
+
+<YouTube id="tNK4dLomNIU" title="SCD Type 2 demo" />
+
 Type 2 slowly changing dimensions (SCDs) retain every version of a dimension
 record. When a customer changes address, for example, the old customer row is
 closed and a new current row is added. Facts can then be joined to the version

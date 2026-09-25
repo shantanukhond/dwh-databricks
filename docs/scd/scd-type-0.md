@@ -2,6 +2,10 @@
 title: Type 0 · Fixed
 ---
 
+import YouTube from '@site/src/components/YouTube';
+
+<YouTube id="dRDkECxAJyY" title="SCD Type 0 demo" />
+
 Type 0 slowly changing dimensions (SCDs) keep the original value of a
 dimension record. When a source record changes, the new value is ignored and
 the first value remains unchanged.

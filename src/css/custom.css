@@ -89,3 +89,22 @@
 .admonition--warning {
   --ifm-alert-color: var(--ifm-color-primary-dark);
 }
+
+/* Lesson videos: fill the content column and keep 16:9 */
+.youtube-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 1.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #111;
+}
+
+.youtube-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

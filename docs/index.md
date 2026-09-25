@@ -10,6 +10,8 @@ hide_table_of_contents: true
 Learn **data warehousing** from the ground up — taught through hands-on
 **Databricks** lessons, each with a YouTube video and a runnable notebook.
 
+📺 **Watch the series:** [Modern DWH Patterns | Spark & Databricks](https://www.youtube.com/playlist?list=PLPhntbQET5lk)
+
 :::warning 🚧 Work in progress
 The course is outlined below. Pages get filled in as videos are recorded.
 :::
@@ -54,6 +56,6 @@ Medallion architecture · Data modeling · Performance tuning · Orchestration
 
 ## How to follow along
 
-- 📺 Watch the video embedded on each lesson page
+- 📺 Watch the [course playlist](https://www.youtube.com/playlist?list=PLPhntbQET5lk), or the video embedded on each lesson page
 - 📓 Run the matching notebook from the repo's `notebooks/` folder
 - 📖 Use these docs as the written reference
